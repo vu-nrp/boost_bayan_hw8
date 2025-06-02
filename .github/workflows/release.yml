@@ -1,0 +1,77 @@
+name: 'C++ CI boost (bayan) hw#8'
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      pages: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+#      # Install Google Tests
+#      - name: 'Install gtest manually'
+#        run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp ./lib/*.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
+      # Checkout sources
+      - uses: actions/checkout@v2
+#      - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
+      - run: cmake . -DPATCH_VERSION=${{ github.run_number }} #-DWITH_BOOST_TEST=ON
+      - run: cmake --build .
+#      - run: cmake --build . --target test
+      - run: cmake --build . --target package
+#      # Run Google Tests
+#      - name: 'Run GTest'
+#        run: /home/runner/work/boost_bayan_hw8/boost_bayan_hw8/bayan_test2
+      # Setup Pages
+      - name: 'Setup Pages'
+        uses: actions/configure-pages@v4
+      # Install Doxygen
+      - name: 'Install Doxygen'
+        run: sudo apt install doxygen && doxygen --version
+      - name: 'Install Graphviz'
+        run: sudo apt install graphviz
+      # Create documentation   
+      - name: 'Create documentation'     
+        run: doxygen
+      # Upload documentation artifact
+      - name: 'Upload documentation artifact'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './html/'
+      # Deploy to GitHub Pages    
+      - name: 'Deploy to GitHub Pages'
+        id: deployment
+        uses: actions/deploy-pages@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+#      # Run App Once
+#      - name: 'Run App Once'
+#        run: /home/runner/work/boost_bayan_hw8/boost_bayan_hw8/bayan
+      # Create Release Step
+      - name: 'Create Release Step'
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          draft: false
+          prerelease: false
+      # Upload Release Asset Step
+      - name: 'Upload Release Asset Step for hw#8'
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./bayan-0.0.${{ github.run_number }}-Linux.deb
+          asset_name: bayan-0.0.${{ github.run_number }}-Linux.deb
+          asset_content_type: application/vnd.debian.binary-package
