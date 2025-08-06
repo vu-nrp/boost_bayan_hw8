@@ -26,7 +26,9 @@ if (MSVC)
         ${Boost_LIBRARY_DIRS}
     )
 else()
-    target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        ${Boost_LIBRARIES}
+    )
 endif()
 
 if (MSVC)
