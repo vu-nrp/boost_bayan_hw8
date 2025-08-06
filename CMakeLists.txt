@@ -10,7 +10,7 @@ if (MSVC)
 endif()
 
 find_package(Boost REQUIRED)
-include_directories(${Boost_INCLUDE_DIR})
+include_directories(${Boost_INCLUDE_DIRS})
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -21,9 +21,13 @@ add_executable(${PROJECT_NAME}
     searcher.cpp
 )
 
-target_link_directories(${PROJECT_NAME} PRIVATE
-    ${Boost_LIBRARY_DIRS}
-)
+if (MSVC)
+    target_link_directories(${PROJECT_NAME} PRIVATE
+        ${Boost_LIBRARY_DIRS}
+    )
+else()
+    target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
+endif()
 
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE
