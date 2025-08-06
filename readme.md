@@ -1,4 +1,5 @@
 # bayan util program options
+```
   --help                 print help    
   --includeDir arg       search directories, separated by semicolons    
   --excludeDir arg       directories excluded from the search, separated by semicolons    
@@ -7,3 +8,4 @@
   --fileMask arg         files filter    
   --blockSize arg (=10)  block size in bytes    
   --checkSum arg (=md5)  checksum algorithm: md5 or crc32    
+```
