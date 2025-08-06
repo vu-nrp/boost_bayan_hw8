@@ -9,7 +9,8 @@ if (MSVC)
     set(BOOST_ROOT "D:/Boost/boost_1_88_0/") # Путь к библиотеке Boost
 endif()
 
-find_package(Boost REQUIRED)
+# find_package(Boost REQUIRED)
+find_package(Boost COMPONENTS program_options filesystem regex REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 set(CMAKE_CXX_STANDARD 17)
