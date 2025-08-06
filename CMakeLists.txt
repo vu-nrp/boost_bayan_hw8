@@ -1,16 +1,39 @@
 cmake_minimum_required(VERSION 3.16)
 
 set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
-set(PROJECT_VESRION 0.0.${PATCH_VERSION})
+set(PROJECT_VERSION 0.0.${PATCH_VERSION})
 
-project(bayan LANGUAGES CXX VERSION ${PROJECT_VESRION})
+project(bayan VERSION ${PROJECT_VERSION})
+
+if (MSVC)
+    set(BOOST_ROOT "D:/Boost/boost_1_88_0/") # Путь к библиотеке Boost
+endif()
+
+find_package(Boost REQUIRED)
+include_directories(${Boost_INCLUDE_DIR})
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(${PROJECT_NAME}
     main.cpp
+    searcher.h
+    searcher.cpp
 )
+
+target_link_directories(${PROJECT_NAME} PRIVATE
+    ${Boost_LIBRARY_DIRS}
+)
+
+if (MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE
+        /W4
+    )
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE
+        -Wall -Wextra -pedantic -Werror
+    )
+endif()
 
 set(CPACK_GENERATOR DEB)
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
